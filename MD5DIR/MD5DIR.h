@@ -10,6 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, MD5DIR_OUTTYPE) {
+    MD5DIR_OUTTYPE_JSON_Steep = 0, /// 陡峭JSON
+    MD5DIR_OUTTYPE_JSON_Flat  = 1  /// 平坦JSON
+};
+
 @interface NSData (md5)
 
 - (NSString *)md5String;
@@ -24,9 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MD5DIR : NSObject
 
-@property (nonatomic, assign) BOOL isAllFile;
+@property (nonatomic, assign) BOOL isAllFile;         /// 是否包含隐藏文件
+@property (nonatomic, assign) MD5DIR_OUTTYPE outType; /// 输出文件类型
 
-- (NSDictionary *)MD5DIR:(NSString *)path;
+- (NSString *)MD5DIR:(NSString *)dir_path;
 
 @end
 

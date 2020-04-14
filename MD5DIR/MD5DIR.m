@@ -53,27 +53,37 @@
 
 @implementation MD5DIR
 
-- (NSDictionary *)MD5DIR:(NSString *)path {
+- (NSString *)MD5DIR:(NSString *)dir_path {
+    switch (_outType) {
+        case MD5DIR_OUTTYPE_JSON_Steep:
+            return [[self JSON_STEEP_MD5DIR:dir_path] jsonString];
+            break;
+        case MD5DIR_OUTTYPE_JSON_Flat:
+            return [[self JSON_FLAT_MD5DIR:dir_path] jsonString];
+    }
+}
+
+- (NSDictionary *)JSON_STEEP_MD5DIR:(NSString *)dir_path {
     BOOL isDir = NO;
     // 跳过隐藏文件
-    if ([[path lastPathComponent] hasPrefix:@"."] && !_isAllFile) { return @{}; }
-    if ([self.fm fileExistsAtPath:path isDirectory:&isDir]) {
+    if ([[dir_path lastPathComponent] hasPrefix:@"."] && !_isAllFile) { return @{}; }
+    if ([self.fm fileExistsAtPath:dir_path isDirectory:&isDir]) {
         if (isDir) {
             NSMutableDictionary *result = [NSMutableDictionary dictionary];
             NSError *error              = nil;
-            NSArray *list               = [self.fm contentsOfDirectoryAtPath:path error:&error];
+            NSArray *list               = [self.fm contentsOfDirectoryAtPath:dir_path error:&error];
             if (error) {
                 NSLog(@"%ld:%@", error.code, error.localizedDescription);
                 return nil;
             }
             for (NSString *subName in list) {
-                NSString *subPath = [path stringByAppendingPathComponent:subName];
+                NSString *subPath = [dir_path stringByAppendingPathComponent:subName];
                 BOOL isSubDir     = NO;
                 if ([self.fm fileExistsAtPath:subPath isDirectory:&isSubDir]) {
                     // 跳过隐藏文件
                     if ([subName hasPrefix:@"."] && !_isAllFile) { continue; }
                     if (isSubDir) {
-                        result[subName] = [self MD5DIR:subPath];
+                        result[subName] = [self JSON_STEEP_MD5DIR:subPath];
                     } else {
                         NSData *data = [[NSData alloc] initWithContentsOfFile:subPath];
                         if (data.length > 0) {
@@ -87,9 +97,31 @@
             return result;
         }
     } else {
-        NSLog(@"文件不存在：%@", path);
+        NSLog(@"文件不存在：%@", dir_path);
     }
     return nil;
+}
+
+- (NSDictionary *)JSON_FLAT_MD5DIR:(NSString *)dir_path {
+    NSDirectoryEnumerator *enumerator = [self.fm enumeratorAtPath:dir_path];
+    NSMutableDictionary *results      = [NSMutableDictionary dictionary];
+
+    BOOL isDir = NO;
+    for (NSString *path in enumerator.allObjects) {
+        BOOL isHiddenFile = NO;
+        for (NSString *key in [path componentsSeparatedByString:@"/"]) {
+            if ([key hasPrefix:@"."]) {
+                isHiddenFile = true;
+                break;
+            }
+        }
+        if (isHiddenFile && !_isAllFile) { continue; }
+        NSString *realPath = [dir_path stringByAppendingPathComponent:path];
+        if (![self.fm fileExistsAtPath:realPath isDirectory:&isDir] || isDir) { continue; }
+        NSData *data  = [[NSData alloc] initWithContentsOfFile:realPath];
+        results[path] = [data md5String];
+    }
+    return @{dir_path : results};
 }
 
 - (NSFileManager *)fm {
