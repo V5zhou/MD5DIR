@@ -36,7 +36,7 @@ int main(int argc, const char * argv[]) {
         // help
         NSUInteger idx = [args indexOfObject:@"-h"]; // HELP
         if (idx != NSNotFound) {
-             PSPrintLine(@"暂无帮助信息，未编写"); return 0;
+             PSPrintLine(@"MD5DIR配置正确，但暂未编写帮助信息"); return 0;
         }
         
         // path

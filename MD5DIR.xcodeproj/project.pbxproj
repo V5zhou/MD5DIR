@@ -77,6 +77,7 @@
 				FCCEC4AC2404BAF200F9729E /* Sources */,
 				FCCEC4AD2404BAF200F9729E /* Frameworks */,
 				FCCEC4AE2404BAF200F9729E /* CopyFiles */,
+				4FB8A97E2445AAEF00664661 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -118,6 +119,26 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4FB8A97E2445AAEF00664661 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "source /usr/local/bin\nMD5DIR -h\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FCCEC4AC2404BAF200F9729E /* Sources */ = {
@@ -245,6 +266,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEPLOYMENT_LOCATION = YES;
+				DSTROOT = /;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -253,6 +276,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEPLOYMENT_LOCATION = YES;
+				DSTROOT = /;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
